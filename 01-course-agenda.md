@@ -34,7 +34,7 @@
 
 ---
 
-## Class 2：Kubernetes 核心架構與運作原理（1 hr 30 min）
+## Class 2：Kubernetes 核心架構與運作原理（1 hr 30 min ＋ OCP 比較 ≈ 1 hr 40）
 
 **投影片**：`class-02-k8s-core.pptx`　**Lab 手冊**：`lab-02-k8s-core.md`
 
@@ -45,7 +45,8 @@
 | 00:35–00:50 | 工作節點元件：kubelet、kube-proxy、container runtime (containerd)、CRI |
 | 00:50–01:05 | 核心物件：Pod、Deployment、ReplicaSet、Service、ConfigMap、Secret |
 | 01:05–01:20 | 宣告式管理與 API 原理（kubectl ↔ apiserver ↔ etcd） |
-| 01:20–01:30 | 課堂小測驗與 Q&A |
+| 01:20–01:33 | **比較：Kubernetes vs OpenShift (OCP)**（含 pros/cons、選擇建議） |
+| 01:33–01:40 | 課堂小測驗與 Q&A |
 
 ---
 
