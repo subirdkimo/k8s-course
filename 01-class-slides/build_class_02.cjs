@@ -126,7 +126,52 @@ bullets(s, 0.6, 1.2, 8.8, 3.2, [
 ], { size: 15, line: 30 });
 footer(s, "本堂原理是後續安裝/運維的基礎");
 
-// Slide 9: 收尾
+// Slide 9: 比較：K8s vs OpenShift (OCP) — 概覽
+s = contentSlide(pptx, "比較：Kubernetes vs OpenShift (OCP)", { page: "9" });
+const compMatrix = [
+  ["面向", "Vanilla Kubernetes", "Red Hat OpenShift"],
+  ["核心", "開源容器編排核心", "企業 K8s 發行版＋支援"],
+  ["安裝", "kubeadm / k3s（自行組裝）", "openshift-install（一鍵/自動 HA）"],
+  ["runtime", "containerd / CRI-O", "CRI-O（Red Hat 主導）"],
+  ["節點 OS", "任意 Linux", "RHCOS（唯讀自動更新）"],
+  ["網路", "自裝 CNI（Calico…）", "內建 OVN-Kubernetes"],
+  ["認證/路由", "自組 OIDC / Ingress", "內建 OAuth＋Router"],
+  ["成本", "免費開源", "付費訂閱（有 SLA）"],
+];
+let mty = 1.1;
+compMatrix.forEach((row, ri) => {
+  const fillc = ri === 0 ? C.navy : (ri % 2 ? C.soft : C.card);
+  const tc = ri === 0 ? C.white : C.navy;
+  row.forEach((cell, ci) => {
+    const x = 0.5 + ci * 3.0;
+    const bold = ri === 0 || ci === 0;
+    const acc = ci === 0 ? C.orange : (bold ? C.navy : C.body);
+    s.addShape("rect", { x, y: mty, w: 3.0, h: 0.52, fill: { color: fillc }, line: { color: C.line, width: 0.5 } });
+    s.addText(cell, { x: x + 0.08, y: mty, w: 2.84, h: 0.52, fontFace: FONT_BODY, fontSize: 11, color: acc, bold, margin: 0, valign: "middle" });
+  });
+  mty += 0.52;
+});
+footer(s, "同一套 K8s API；OCP 等於「K8s 核心 + 企業層功能 + Red Hat 支援」");
+
+// Slide 10: 比較：Pros & Cons
+s = contentSlide(pptx, "OCP 比較：優點 vs 缺點", { page: "10" });
+card(s, 0.5, 1.15, 4.4, 2.25, C.orange, "Kubernetes（Vanilla）", "Pros：免費開源 / 輕量客製 / 版本自主\nCons：CNI/監控/Ingress/RBAC 全要自組\n無原廠支援、維運與升級成本高");
+card(s, 5.1, 1.15, 4.4, 2.25, C.blue, "OpenShift（OCP）", "Pros：企業一體化 / 支援與 SLA / 安全開箱即用\nCons：付費訂閱 / 較重耗資源 / 客製受限\n綁定 Red Hat 節奏，免費版 OKD 無支援");
+const pick = [
+  ["訓練/研究/Lab →", "Vanilla Kubernetes（零成本、看透原理）"],
+  ["企業上線/需合規 →", "OpenShift（付費買支援與一體化）"],
+  ["折衷 →", "先打穩 K8s 原理，轉 OCP 僅換外皮"],
+];
+let py = 3.7;
+pick.forEach((row) => {
+  s.addShape("roundRect", { x: 0.5, y: py, w: 9, h: 0.52, fill: { color: C.soft }, rectRadius: 0.08 });
+  s.addText(row[0], { x: 0.65, y: py + 0.06, w: 3.1, h: 0.4, fontFace: FONT_BODY, fontSize: 13, color: C.orange, bold: true, margin: 0, valign: "middle" });
+  s.addText(row[1], { x: 3.85, y: py + 0.06, w: 5.5, h: 0.4, fontFace: FONT_BODY, fontSize: 13, color: C.navy, margin: 0, valign: "middle" });
+  py += 0.6;
+});
+footer(s, "底層都是 K8s API；本課程以 Vanilla (kubeadm) 講透原理，OCP 只是企業層調味");
+
+// Slide 11: 收尾
 s = darkSlide(pptx, { kicker: "Class 2 · 完成", title: "下一步：網路、儲存、高可用", titleY: 1.6, sub: "了解 K8s 對外暴露、持久儲存與 HA 的原理。" });
 s.addText("原理通了，接下來實作前先把基礎元件（CNI/儲存/HA）搞懂。", { x: 0.6, y: 3.2, w: 8.6, h: 0.6, fontFace: FONT_BODY, fontSize: 14, color: C.ice, margin: 0 });
 s.addNotes("Wrap up, hand-off to Class 3.");
