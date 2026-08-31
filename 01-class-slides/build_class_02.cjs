@@ -1,0 +1,134 @@
+const pptxgen = require("/tmp/opencode/deckbuild/node_modules/pptxgenjs");
+const D = require("/root/opencode/k8s/.design.cjs");
+const { C, FONT_HEAD, FONT_BODY, W, H, darkSlide, contentSlide, card, bullets, footer } = D;
+
+const pptx = new pptxgen();
+pptx.layout = "LAYOUT_16x9";
+pptx.author = "AI_assist";
+pptx.title = "Class 2 - Kubernetes 核心架構與運作原理";
+
+let s = darkSlide(pptx, { kicker: "PVE × Kubernetes 工程師訓練", title: "Class 2", titleSize: 60 });
+s.addShape("roundRect", { x: 0.6, y: 4.1, w: 6.2, h: 0.6, fill: { color: C.blue }, rectRadius: 0.1 });
+s.addText("Kubernetes 核心架構與運作原理", { x: 0.6, y: 4.1, w: 6.2, h: 0.6, fontFace: FONT_BODY, fontSize: 15, color: C.white, bold: true, align: "center", margin: 0 });
+s.addText("1 hr 30 min ｜ 理論 ｜ 容器編排", { x: 0.6, y: 4.85, w: 8.8, h: 0.4, fontFace: FONT_BODY, fontSize: 13, color: C.ice, margin: 0 });
+s.addNotes("K8s core: motivation, control plane, worker node, objects, declarative model.");
+
+// Slide 2: 為什麼需要 K8s
+s = contentSlide(pptx, "為什麼需要 Kubernetes", { page: "2" });
+card(s, 0.5, 1.2, 4.4, 2.1, C.orange, "容器解決了什麼", "把單一應用打包與執行\n（containerd / Docker 皆可）\n可攜、隔離、輕量");
+card(s, 5.1, 1.2, 4.4, 2.1, C.blue, "容器編排解決什麼", "數百個容器的：調度、自癒\n服務發現、負載平衡\n滾動更新、橫向擴展");
+s.addShape("roundRect", { x: 0.5, y: 3.55, w: 9, h: 1.5, fill: { color: C.soft }, rectRadius: 0.1 });
+s.addText("Kubernetes = 業界標準容器編排平台", { x: 0.7, y: 3.75, w: 8.6, h: 0.45, fontFace: FONT_HEAD, fontSize: 20, color: C.navy, bold: true, margin: 0 });
+s.addText("宣告式（Declarative）· 自我修復（Self-Healing）· 可擴展（Scalable）· 可攜（Portable）", { x: 0.7, y: 4.3, w: 8.6, h: 0.5, fontFace: FONT_BODY, fontSize: 14, color: C.body, margin: 0 });
+footer(s, "K8s 的哲學：描述「想要的狀態」，系統自動收斂");
+
+// Slide 3: 整體架構圖（控製平面 + 工作節點）
+s = contentSlide(pptx, "總體架構：控制平面 + 工作節點", { page: "3" });
+// control plane box
+s.addShape("rect", { x: 0.5, y: 1.1, w: 4.3, h: 3.6, fill: { color: C.soft }, line: { color: C.blue, width: 1 } });
+s.addText("控制平面 (Control Plane)", { x: 0.6, y: 1.1, w: 4.1, h: 0.4, fontFace: FONT_HEAD, fontSize: 16, color: C.navy, bold: true, margin: 0 });
+const cp = [
+  ["kube-apiserver", "唯一入口 / 認證授權"],
+  ["etcd", "叢集狀態儲存 (quorum)"],
+  ["kube-scheduler", "為 Pod 選節點"],
+  ["kube-controller-manager", "控制器迴圈收斂"],
+];
+let cy = 1.6;
+cp.forEach((c) => {
+  s.addShape("roundRect", { x: 0.7, y: cy, w: 3.9, h: 0.62, fill: { color: C.white }, rectRadius: 0.1, line: { color: C.blue } });
+  s.addText(c[0], { x: 0.85, y: cy + 0.07, w: 1.9, h: 0.4, fontFace: FONT_BODY, fontSize: 12, color: C.blue, bold: true, margin: 0 });
+  s.addText(c[1], { x: 2.8, y: cy + 0.12, w: 1.75, h: 0.35, fontFace: FONT_BODY, fontSize: 9, color: C.sub, margin: 0 });
+  cy += 0.75;
+});
+// worker box
+s.addShape("rect", { x: 5.1, y: 1.1, w: 4.4, h: 3.6, fill: { color: C.card }, line: { color: C.orange, width: 1 } });
+s.addText("工作節點 (Worker Node) × N", { x: 5.2, y: 1.1, w: 4.2, h: 0.4, fontFace: FONT_HEAD, fontSize: 16, color: C.navy, bold: true, margin: 0 });
+const wn = [
+  ["kubelet", "管理本節點 Pod/容器"],
+  ["kube-proxy", "Service 網路規則"],
+  ["containerd", "容器執行期 (CRI)"],
+];
+let wy = 1.6;
+wn.forEach((c) => {
+  s.addShape("roundRect", { x: 5.3, y: wy, w: 4.05, h: 0.72, fill: { color: C.white }, rectRadius: 0.1, line: { color: C.orange } });
+  s.addText(c[0], { x: 5.45, y: wy + 0.1, w: 1.6, h: 0.4, fontFace: FONT_BODY, fontSize: 12, color: C.orange, bold: true, margin: 0 });
+  s.addText(c[1], { x: 7.1, y: wy + 0.15, w: 2.2, h: 0.35, fontFace: FONT_BODY, fontSize: 9, color: C.sub, margin: 0 });
+  wy += 0.85;
+});
+// arrow between
+s.addShape("line", { x: 4.8, y: 2.9, w: 0.3, h: 0, line: { color: C.orange, width: 3 } });
+s.addText("kubelet 每 10s 回報狀態", { x: 4.55, y: 3.0, w: 0.9, h: 0.8, fontFace: FONT_BODY, fontSize: 8, color: C.sub, align: "center", margin: 0 });
+// legend
+s.addText("kubectl / API 用戶端", { x: 0.5, y: 4.9, w: 9, h: 0.4, fontFace: FONT_BODY, fontSize: 13, color: C.blue, bold: true, margin: 0, align: "center" });
+s.addShape("line", { x: 4.7, y: 5.0, w: 0.4, h: 0, line: { color: C.blue, width: 2 } });
+footer(s, "apiserver 是唯一入口；etcd 保存期望狀態");
+
+// Slide 4: 控制平面元件
+s = contentSlide(pptx, "控制平面元件職責", { page: "4" });
+card(s, 0.5, 1.2, 4.4, 1.6, C.blue, "kube-apiserver", "所有 API 請求唯一入口\n驗證 / 授權 / 准入\n狀態透過 etcd 保存");
+card(s, 5.1, 1.2, 4.4, 1.6, C.orange, "etcd", "分散式 KV 儲存\n存整個叢集狀態\n需奇數副本維持 quorum");
+card(s, 0.5, 3.0, 4.4, 1.6, C.blue, "kube-scheduler", "為新 Pod 選擇節點\n考量資源/標籤/親和性\n不執行 Pod");
+card(s, 5.1, 3.0, 4.4, 1.6, C.orange, "kube-controller-manager", "執行控制器迴圈\n(ReplicaSet/Node/Deployment...)\n把現況收斂到期望狀態");
+footer(s, "高可用叢集會部署 ≥3 個控制平面（Class 3/5）");
+
+// Slide 5: 工作節點元件
+s = contentSlide(pptx, "工作節點元件", { page: "5" });
+card(s, 0.5, 1.2, 4.4, 1.6, C.orange, "kubelet", "節點上的主要代理\n向 apiserver 註冊\n負責啟動/停止 Pod 容器");
+card(s, 5.1, 1.2, 4.4, 1.6, C.blue, "kube-proxy", "實作 Service 網路規則\n(iptables / IPVS)\n把流量導向後端 Pod");
+card(s, 0.5, 3.0, 4.4, 1.6, C.orange, "containerd (CRI)", "真正執行容器的元件\nCNCF 維護、輕量\nK8s 自 1.24 起預設 runtime");
+card(s, 5.1, 3.0, 4.4, 1.6, C.blue, "CRI 介面", "Container Runtime Interface\n標準化 runtime 與 K8s 的溝通\n可替換（containerd/cri-o）");
+footer(s, "containerd 已取代 Docker 作為 K8s 的預設 runtime");
+
+// Slide 6: 核心物件
+s = contentSlide(pptx, "核心物件（API 資源）", { page: "6" });
+card(s, 0.5, 1.2, 2.9, 1.9, C.blue, "Pod", "最小部署單位\n共享網路/儲存的容器群\n通常由控制器管理");
+card(s, 3.55, 1.2, 2.9, 1.9, C.orange, "Deployment", "宣告副本數/鏡像\n管理滾動更新與滾回\n透過 ReplicaSet");
+card(s, 6.6, 1.2, 2.9, 1.9, C.blue, "Service", "穩定虛擬 IP + DNS\n服務發現/負載平衡\nClusterIP/NodePort/LB");
+card(s, 0.5, 3.3, 2.9, 1.7, C.orange, "ConfigMap", "明文設定\n與鏡像分離\n可動態變更");
+card(s, 3.55, 3.3, 2.9, 1.7, C.blue, "Secret", "機密 (base64)\n憑證/密碼\n避免寫入鏡像");
+card(s, 6.6, 3.3, 2.9, 1.7, C.orange, "其他", "Namespace / Ingress\nStatefulSet / Job\nPV/PVC/StorageClass\nNetworkPolicy");
+footer(s, "Namespace 做邏輯隔離；Ingress 做七層路由");
+
+// Slide 7: 宣告式管理流程
+s = contentSlide(pptx, "宣告式管理與 API 原理", { page: "7" });
+const flow = [
+  "kubectl apply",
+  "kube-apiserver\n(驗證/授權/准入)",
+  "etcd\n(期望狀態)",
+  "controllers\n(收斂差異)",
+  "scheduler→kubelet\n→containerd",
+];
+let fx = 0.5;
+flow.forEach((f, i) => {
+  s.addShape("roundRect", { x: fx, y: 1.5, w: 1.65, h: 1.3, fill: { color: i === 2 ? C.orange : C.soft }, rectRadius: 0.1, line: { color: i === 2 ? C.orange : C.blue } });
+  const parts = f.split("\n");
+  s.addText(parts[0], { x: fx + 0.08, y: 1.65, w: 1.5, h: parts.length > 1 ? 0.5 : 0.9, fontFace: FONT_BODY, fontSize: 11, color: C.navy, bold: true, align: "center", margin: 0 });
+  if (parts.length > 1) s.addText(parts.slice(1).join("\n"), { x: fx + 0.08, y: 2.15, w: 1.5, h: 0.6, fontFace: FONT_BODY, fontSize: 8, color: C.sub, align: "center", margin: 0, lineSpacing: 11 });
+  if (i < flow.length - 1) s.addShape("line", { x: fx + 1.65, y: 2.15, w: 0.35, h: 0, line: { color: C.orange, width: 2.5 } });
+  fx += 2.0;
+});
+bullets(s, 0.6, 3.2, 8.8, 2.0, [
+  "K8s 是「宣告式」：你描述想要的狀態，controller 收斂",
+  "kubectl 只是 HTTPS 客戶端，透過 REST 呼叫 apiserver",
+  "所有狀態最終寫入 etcd；任何語言/工具都能操作",
+], { size: 14 });
+footer(s, "Key takeaway：宣告式 vs 命令式");
+
+// Slide 8: 重點複習 / 測驗
+s = contentSlide(pptx, "重點複習", { page: "8" });
+bullets(s, 0.6, 1.2, 8.8, 3.2, [
+  "控制平面（apiserver/etcd/scheduler/controller）負責「決定」叢集狀態",
+  "工作節點（kubelet/kube-proxy/containerd）負責「執行」Pod",
+  "Pod 是最小單位、Deployment 管副本、Service 提供穩定存取",
+  "所有狀態存在 etcd；apiserver 是唯一入口",
+  "containerd 是現行標準 runtime",
+  "小測驗：取得 Quizlet 課堂小測驗（04-exercises/QUIZZES.md）",
+], { size: 15, line: 30 });
+footer(s, "本堂原理是後續安裝/運維的基礎");
+
+// Slide 9: 收尾
+s = darkSlide(pptx, { kicker: "Class 2 · 完成", title: "下一步：網路、儲存、高可用", titleY: 1.6, sub: "了解 K8s 對外暴露、持久儲存與 HA 的原理。" });
+s.addText("原理通了，接下來實作前先把基礎元件（CNI/儲存/HA）搞懂。", { x: 0.6, y: 3.2, w: 8.6, h: 0.6, fontFace: FONT_BODY, fontSize: 14, color: C.ice, margin: 0 });
+s.addNotes("Wrap up, hand-off to Class 3.");
+
+pptx.writeFile({ fileName: "/root/opencode/k8s/01-class-slides/class-02-k8s-core.pptx" }).then(() => console.log("class-02 done"));
