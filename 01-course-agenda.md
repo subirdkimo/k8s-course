@@ -19,34 +19,37 @@
 
 ---
 
-## Class 1：Proxmox VE 虛擬化平台概論（1 hr 15 min）
+## Class 1：Proxmox VE 虛擬化平台概論（2 hr，含觀念深化）
 
 **投影片**：`class-01-pve-overview.pptx`　**Lab 手冊**：`lab-01-pve-overview.md`
 
 | 時間 | 單元 |
 |------|------|
 | 00:00–00:10 | PVE 是什麼、架構（Hypervisor + 管理堆疊）、9.x 最新版重點 |
-| 00:10–00:25 | 虛擬化技術：QEMU/KVM、LXC 容器、VirtIO、CPU/記憶體/磁碟模型 |
-| 00:25–00:40 | PVE 儲存：Local、LVM-Thin、ZFS、Ceph（供 K8s PV 的共用儲存基礎） |
-| 00:40–00:50 | PVE 網路：Linux Bridge、VLAN、SDN（動態負載平衡器 9.2 新功能） |
-| 00:50–01:05 | 叢集、HA、備份（PBS）、快照 概念 |
-| 01:05–01:15 | Lab：建立 VM、快照、備份/還原體驗 |
+| 00:10–00:22 | **觀念**：虛擬化三種形態（Type-1/2/容器）＋ 隔離 vs 效能光譜 |
+| 00:22–00:32 | 虛擬化技術：QEMU/KVM、LXC 容器、VirtIO、qemu-guest-agent |
+| 00:32–00:40 | CPU type：host vs 標準化型號（live migration 取捨） |
+| 00:40–00:52 | 儲存：Local、LVM-Thin、ZFS、Ceph ＋ **觀念**：精簡供應/快照/超售 |
+| 00:52–01:02 | 網路：Linux Bridge、VLAN、SDN ＋ **觀念**：封包流向心智模型 |
+| 01:02–01:14 | 叢集、HA、備份（PBS）、快照 ＋ **觀念**：quorum / 重啟 vs 遷移 |
+| 01:14–01:45 | Lab：建立 VM、快照、備份/還原體驗 |
+| 01:45–02:00 | 重點複習、小測驗與 Q&A |
 
 ---
 
-## Class 2：Kubernetes 核心架構與運作原理（1 hr 30 min ＋ OCP 比較 ≈ 1 hr 40）
+## Class 2：Kubernetes 核心架構與運作原理（2 hr 15 min，含 OCP 比較與觀念深化）
 
 **投影片**：`class-02-k8s-core.pptx`　**Lab 手冊**：`lab-02-k8s-core.md`
 
 | 時間 | 單元 |
 |------|------|
-| 00:00–00:15 | 容器與容器編排動機、K8s 定位 |
-| 00:15–00:35 | 控制平面元件：kube-apiserver、etcd、kube-scheduler、kube-controller-manager |
-| 00:35–00:50 | 工作節點元件：kubelet、kube-proxy、container runtime (containerd)、CRI |
-| 00:50–01:05 | 核心物件：Pod、Deployment、ReplicaSet、Service、ConfigMap、Secret |
-| 01:05–01:20 | 宣告式管理與 API 原理（kubectl ↔ apiserver ↔ etcd） |
-| 01:20–01:33 | **比較：Kubernetes vs OpenShift (OCP)**（含 pros/cons、選擇建議） |
-| 01:33–01:40 | 課堂小測驗與 Q&A |
+| 00:00–00:14 | 容器與容器編排動機、K8s 定位 ＋ **觀念**：容器/VM/裸機隔離光譜 |
+| 00:14–00:36 | 控制平面元件：apiserver、etcd、scheduler、controller-manager ＋ **觀念**：宣告式與 Reconcile Loop、etcd quorum |
+| 00:36–00:50 | 工作節點元件：kubelet、kube-proxy、containerd、CRI ＋ **觀念**：Pod 網路兩層 IP（CNI）|
+| 00:50–01:15 | 核心物件：Pod、Deployment、ReplicaSet ＋ **觀念**：Service 必要性與原理、排程（Affinity/Taint/Spread）|
+| 01:15–01:32 | 宣告式管理與 API 原理（kubectl ↔ apiserver ↔ etcd 資料流）|
+| 01:32–01:56 | **比較：Kubernetes vs OpenShift (OCP)**（含 pros/cons、選擇建議）|
+| 01:56–02:15 | 課堂小測驗與 Q&A |
 
 ---
 
